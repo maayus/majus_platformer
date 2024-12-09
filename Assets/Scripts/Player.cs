@@ -119,7 +119,7 @@ public class Player : MonoBehaviour
     {
         if(other.relativeVelocity.magnitude > 25)
         {
-            health.TakeDamage(0.5f);
+            health.TakeDamage(1);
             Instantiate(bloodVfx, transform.position, Quaternion.identity);
         }
     }

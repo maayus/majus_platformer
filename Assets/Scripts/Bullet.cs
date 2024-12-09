@@ -28,6 +28,13 @@ public class Bullet : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D other)
     {
         var damage = Random.Range(damage_range.x, damage_range.y);
+
+        var health = other.gameObject.GetComponent<Health>();
+        if (health != null)
+        {
+            health.TakeDamage((int)damage);
+        }
+
         Instantiate(impact, transform.position, Quaternion.identity);
         Destroy(gameObject);
     }
