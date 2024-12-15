@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -25,6 +26,8 @@ public class Player : MonoBehaviour
     public int max_jumps = 2;
 
     public Health health;
+    public TMP_Text coin_count;
+    public int coins = 0;
 
     private int jumps_left = 0;
 
@@ -36,7 +39,8 @@ public class Player : MonoBehaviour
     public bool is_dashing;
     public float dash_time;
     public float dash_cooldown_time;
-
+    public float spike_time = 0.3f;
+    public bool on_spikes = false;
 
     void Start()
     {
@@ -81,7 +85,7 @@ public class Player : MonoBehaviour
             }
         }
 
-        if (Input.GetButtonDown("Fire3") && dash_cooldown_time <= 0)
+        if (Input.GetButtonDown("Fire1") && dash_cooldown_time <= 0)
         {
             is_dashing = true;
             dash_time = dash_duration;
@@ -121,6 +125,38 @@ public class Player : MonoBehaviour
         {
             health.TakeDamage(1);
             Instantiate(bloodVfx, transform.position, Quaternion.identity);
+        }
+        if (other.gameObject.CompareTag("Coin"))
+        {
+            Destroy(other.gameObject);
+            coins += 1;
+            coin_count.text = coins.ToString();
+        }
+        if (other.gameObject.CompareTag("Spikes"))
+        {
+            on_spikes = true;
+            StartCoroutine(StartCountdown(spike_time));
+        }
+    }
+    private void OnCollisionExit2D(Collision2D other)
+    {
+        if (other.gameObject.CompareTag("Spikes"))
+        {
+            on_spikes = false;
+        }
+    }
+
+    public IEnumerator StartCountdown(float countdownValue = 10)
+    {
+        float currCountdownValue = countdownValue;
+        while (currCountdownValue > 0)
+        {
+            yield return new WaitForSeconds(spike_time);
+            currCountdownValue--;
+        }
+        if (on_spikes)
+        {
+            health.TakeDamage(1);
         }
     }
 }
